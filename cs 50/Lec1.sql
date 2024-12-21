@@ -1,0 +1,2 @@
+SELET *
+FROM "table";
