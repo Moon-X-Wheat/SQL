@@ -30,3 +30,16 @@ SELECT name from authors WHERE id = (
 		SELECT id from books 
       	WHERE title = 'Flights')
 	);
+
+-- 当搜索条件是一个集合（有很多个），用关键词IN
+SELECT title
+from books
+WHERE id in (
+  SELECT book_id
+  from authored
+  WHERE author_id = (
+    SELECT id 
+    from authors
+    WHERE name = 'Fernanda Melchor'
+  )
+);
