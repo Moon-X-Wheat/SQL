@@ -13,11 +13,12 @@ SELECT SUM(pupils * per_pupil_expenditure)/SUM(pupils) as "Average District Per-
 from expenditures
 
 -- 4. find the 10 cities with the most public schools. return the names of the cities and the number of public schools, ordered from greatest to least, then order alphabetically.
-SELECT city, COUNT(name) as "Number of public schools"
-from schools
+SELECT city, COUNT(name) as "Numbers of public schools"
+FROM schools
+WHERE type LIKE 'public%'
 GROUP by city
-ORDER by "Number of public schools" DESC, city
-LIMIT 10;
+ORDER by "Numbers of public schools" DESC, city
+LIMIT 10
 
 -- 5. find cities with 3 or fewer public schools, return names and number of public school, ordered from greatest to least
 SELECT city, COUNT(name) as "Number of public schools"
@@ -67,7 +68,8 @@ LEFT JOIN expenditures
 ON "expenditures"."district_id" = "districts"."id"
 WHERE "districts"."type" LIKE 'Public%'
 ORDER by "expenditures"."per_pupil_expenditure" DESC
-
+LIMIT 10
+	
 -- 11. names of schools, per-pupil expenditure, graduation rate, sorted from greatest per-pupil expenditure to least, than school name.
 SELECT "schools"."id", "schools"."name","graduation_rates"."graduated", "expenditures"."per_pupil_expenditure"
 FROM schools
