@@ -43,3 +43,55 @@ WHERE district_id = (
   FROM districts
   WHERE name = 'Cambridge'
 )
+
+-- 8. names of schools districts andthe numbers of pupils
+SELECT "districts"."id", "districts"."name", "expenditures"."pupils"
+FROM districts
+LEFT join expenditures
+ON "districts"."id" = "expenditures"."district_id"
+
+-- 9. name of the school district with the single least number of pupils
+SELECT name
+FROM districts
+WHERE id = (
+  SELECT district_id
+  FROM expenditures
+  ORDER by pupils
+  LIMIT 1
+)
+
+-- 10. 10 public school districts with the highest per-pupil expenditures, with names and per-pupil expenditure for each
+SELECT "districts"."id","districts"."name", "expenditures"."per_pupil_expenditure"
+FROM districts
+LEFT JOIN expenditures
+ON "expenditures"."district_id" = "districts"."id"
+WHERE "districts"."type" LIKE 'Public%'
+ORDER by "expenditures"."per_pupil_expenditure" DESC
+
+-- 11. names of schools, per-pupil expenditure, graduation rate, sorted from greatest per-pupil expenditure to least, than school name.
+SELECT "schools"."id", "schools"."name","graduation_rates"."graduated", "expenditures"."per_pupil_expenditure"
+FROM schools
+LEFT join graduation_rates
+on "schools"."id" = "graduation_rates"."school_id"
+LEFT join expenditures
+on "schools"."district_id" = "expenditures"."district_id"
+ORDER by per_pupil_expenditure DESC, name
+
+-- school districts with above-average percentage of teachers rated "exemplary", and above-average per-pupil expenditures, sorted by exemplary and by expenditure
+SELECT "districts"."id", "districts"."name", "staff_evaluations"."exemplary", "expenditures"."per_pupil_expenditure"
+FROM districts
+left join staff_evaluations
+on "districts"."id" = "staff_evaluations"."district_id"
+LEFT JOIN expenditures
+on "districts"."id" = "expenditures"."district_id"
+WHERE 
+	exemplary > (
+      SELECT AVG(exemplary)
+  		FROM staff_evaluations
+    )
+  AND
+  per_pupil_expenditure > (
+      SELECT AVG(per_pupil_expenditure)
+  		FROM expenditures
+    )
+ORDER by exemplary DESC, per_pupil_expenditure DESC
