@@ -86,14 +86,16 @@ left join staff_evaluations
 on "districts"."id" = "staff_evaluations"."district_id"
 LEFT JOIN expenditures
 on "districts"."id" = "expenditures"."district_id"
-WHERE 
+WHERE
+	type like 'public%'
+    	AND
 	exemplary > (
-      SELECT AVG(exemplary)
-  		FROM staff_evaluations
-    )
-  AND
-  per_pupil_expenditure > (
-      SELECT AVG(per_pupil_expenditure)
-  		FROM expenditures
-    )
+	     	SELECT AVG(exemplary)
+	  	FROM staff_evaluations
+    	)
+  	AND
+  	per_pupil_expenditure > (
+	      	SELECT AVG(per_pupil_expenditure)
+	  	FROM expenditures
+    	)
 ORDER by exemplary DESC, per_pupil_expenditure DESC
