@@ -1,5 +1,5 @@
 -- 1. 
-SELECT year, AVG(salary) as "average salary"
+SELECT year, ROUND(AVG(salary), 2) as "average salary"
 FROM salaries
 GROUP by year
 ORDER by "year" DESC;
@@ -71,21 +71,57 @@ WHERE id = (
   )
 )
 
--- 8. 2001 salary of the player who hit the most home runs in 2001: only salary
+-- 8. 2001 salary of the player who hit the most home runs in 2001: only salary 1030000
 WITH "most home runs" as (
-SELECT player_id, SUM(h) as "total hits"
+SELECT player_id, SUM(hr) as "total hits"
 FROM performances
+where year =2001
 group by player_id
-HAVING year = 2001
 ORDER by "total hits" Desc
 LIMIT 1
 )
 SELECT salary
 from salaries
-WHERE player_id = (
-  SELECT "player_id"
-  from "most home runs"
-);
+WHERE 
+	player_id = (
+  	SELECT "player_id"
+  	from "most home runs"
+	) 
+	and year = 2001
+
+select salary
+from salaries
+join performances on performances.player_id = salaries.player_id
+WHERE performances.year = 2001 and salaries.year = 2001
+order by HR DESC
+LIMIT 1
 
 -- 9. 5 lowest paying teams (by average salary) in 2001: round the average salary to two decimal places and call it "average salary:; sort by average salary, least to greatest; two columns: names and average salary
+SELECT name, ROUND(AVG(salary), 2) as "average salary"
+from salaries
+join teams on "teams"."id" = "salaries"."team_id"
+WHERE "teams"."year" = 2001
+GROUP by name
+ORDER by "average salary"
+limit 5
+
+-- 10. each player's name, salary for each year, numner of home runs for each year. 6 columns: first name, last name, salaries, year of the salaries, homes runs, year of the home runs
+SELECT first_name, last_name, salary, salaries.year, HR
+FROM players
+join salaries on salaries.player_id = players.id
+join performances on performances.player_id = players.id and performances.year = salaries.year
+order by players.id, salaries.year Desc, HR DESC, salary DESC
+
+-- 11. 10 least expensive players per hit in 2001
+SELECT first_name, last_name, salary/H as "dollars per hit"
+from players
+join performances on performances.player_id = players.id
+join salaries on salaries.player_id = players.id and salaries.year = performances.year
+WHERE salaries.year = 2001 and H != 0
+order by "dollars per hit", first_name, last_name
+LIMIT 10
+
+-- 12. among 10 least expensive players per hit and among the 10 least expensive players per RBI in 2001
+
+
 
