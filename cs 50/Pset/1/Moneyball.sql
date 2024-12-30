@@ -122,6 +122,30 @@ order by "dollars per hit", first_name, last_name
 LIMIT 10
 
 -- 12. among 10 least expensive players per hit and among the 10 least expensive players per RBI in 2001
+WITH "least_paid_h" as (
+	SELECT performances.player_id
+	from performances
+	join salaries on performances.player_id = salaries.player_id and performances.year = salaries.year
+	where performances.year = 2001 and h !=0
+	ORDER by salary/h
+	limit 10),
 
+"least_paid_rbi" as (
+	SELECT performances.player_id
+	FROM performances
+	join salaries on performances.player_id = salaries.player_id and performances.year = salaries.year
+	where performances.year = 2001 and rbi !=0
+	ORDER by salary/rbi
+	LIMIT 10)
+
+SELECT first_name, last_name
+from players
+WHERE id in (
+	SELECT player_id
+  	from "least_paid_h"
+  	INTERSECT
+  	SELECT player_id
+  	FROM "least_paid_rbi")
+ORDER by id
 
 
