@@ -27,7 +27,7 @@ create table "check-ins" (
     "id" integer,
     "flight number" integer not null,
     "airline_id" integer,
-    "departing airport code" text not null,
+    "to airport" text not null,
     "heading airport code" text not null,
     "departure time" numeric not null,
     "arrival time" numeric not null,
