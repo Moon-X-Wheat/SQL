@@ -64,10 +64,16 @@ insert into "user"
 values (2, 'Reid', 'Hoffman', 'reid', 'password');
 
 insert into "school"
-values (1, 'Harvard University', 'University', 'Cambridge Massachusetts', '1636')
+values (1, 'Harvard University', 'University', 'Cambridge Massachusetts', '1636');
 
 insert into "companies"
-values (1, 'Linkedln', 'Technology', 'Sunnyvale, California')
+values (1, 'Linkedln', 'Technology', 'Sunnyvale, California');
+
+insert into "schools_connections"
+values (1, 1, 1, '1973-09-01', '1976-06-01', 'BA');
+
+insert into "companies_connections"
+values (1, 2, '1', '2003-01-01', '2007-02-01', 'CEO, Chairman');
 
 
   
