@@ -21,19 +21,24 @@ create table "donunts_ingredients" (
   foreign key ("ingredient_id") references "ingredients"("id")
 );
 
-create table "order_history" (
-  "order_number" integer,
+
+create table "order_record" (
+  "id" integer,
   "customer_id" integer,
-  primary key ("order_number"),
+  primary key ("id"),
   foreign key ("customer_id") references "customers"("id")
 );
 
-create table "orders_donuts" (
-  "order_number" integer,
-  "donuts_id" integer,
+
+create table "orders" (
+  "order_id" integer,
+  "donut_id" integer,
   "count" integer default 1,
-  foreign key ("order_number") references "orders"("order_number"),
-  foreign key ("order_number") references "donuts"("id")
+  "customer_id" integer, 
+  primary key ("order_id", "donut_id"),
+  foreign key ("order_id") references "order_record"("id"),
+  foreign key ("donut_id") references "donuts"("id"),
+  foreign key ("customer_id") references "customers"("id")
 );
 
 create table "customers" (
