@@ -18,11 +18,12 @@ create table "schools" (
 
 create table "companies" (
   "id" integer,
-  "name" text,
-  "industry" text, not null,
-  "location" text, not null,
-  primary key ("id");
+  "name" text not null,
+  "industry" text not null,
+  "location" text not null,
+  primary key ("id")
 );
+
 
 create table "users_connection" (
   "id" integer,
@@ -41,7 +42,7 @@ create table "schools_connections" (
   "end date" date,
   "degree" text,
   primary key ("id"),
-  foreign key ("users_id") references "user"("id"),
+  foreign key ("user_id") references "user"("id"),
   foreign key ("school_id") references "schools"("id")
 );
 
@@ -53,8 +54,8 @@ create table "companies_connections" (
   "end date" date,
   "title" text,
   primary key ("id"),
-  foreign key ("users_id") references "user"("id"),
-  foreign key ("school_id") references "schools"("id")
+  foreign key ("user_id") references "user"("id"),
+  foreign key ("company_id") references "schools"("id")
 );
 
 insert into "user"
@@ -74,6 +75,9 @@ values (1, 1, 1, '1973-09-01', '1976-06-01', 'BA');
 
 insert into "companies_connections"
 values (1, 2, '1', '2003-01-01', '2007-02-01', 'CEO, Chairman');
+
+ALTER TABLE companies_connections
+add COLUMN "status" text CHECK ("status" in ('earned', 'pursued')) -- 添加列：是否在职；是否在读
 
 
   
