@@ -22,22 +22,22 @@ WHERE "id" IN ( --SEARCH students USING INTEGER PRIMARY KEY (rowid=?)
     WHERE "course_id" = ( --SEARCH enrollments USING INDEX search_by_course_id (course_id=?)
         SELECT "id"
         FROM "courses" -- scan here
-        WHERE "courses"."department" = 'Computer Science' -- SEARCH courses USING COVERING INDEX search_by_course
+        WHERE "courses"."department" = 'Computer Science' -- SEARCH courses USING COVERING INDEX search_by_semester
         AND "courses"."number" = 50
         AND "courses"."semester" = 'Fall 2023'
     )
 );
 
 
-create index "search_by_course"
-on "courses"("department", "number", "semester", "title") -- 创建一个包含课程所有信息的检索，之后如果用上课程标题，也不用再额外创建检索。
+create index "search_by_semester"
+on "courses"("semester") -- 因为之后所有涉及courses的检索都涉及到semester，所以创建index的时候只用这一项内容就足够。
 
 -- Sort courses by most- to least-enrolled in Fall 2023:
 explain query plan
 SELECT "courses"."id", "courses"."department", "courses"."number", "courses"."title", COUNT(*) AS "enrollment"
 FROM "courses"
 JOIN "enrollments" ON "enrollments"."course_id" = "courses"."id" -- SEARCH enrollments USING COVERING INDEX search_by_course_id (course_id=?)
-WHERE "courses"."semester" = 'Fall 2023' -- SCAN courses
+WHERE "courses"."semester" = 'Fall 2023' -- -- SEARCH courses USING COVERING INDEX search_by_semester
 GROUP BY "courses"."id"
 ORDER BY "enrollment" DESC;
 
@@ -45,7 +45,7 @@ ORDER BY "enrollment" DESC;
 explain query plan
 SELECT "courses"."id", "courses"."department", "courses"."number", "courses"."title"
 FROM "courses"
-WHERE "courses"."department" = 'Computer Science' -- SEARCH courses USING COVERING INDEX search_by_course (department=?)
+WHERE "courses"."department" = 'Computer Science' -- -- SEARCH courses USING COVERING INDEX search_by_semester
 AND "courses"."semester" = 'Spring 2024';
 
 
@@ -59,7 +59,7 @@ WHERE "requirements"."id" = ( -- SEARCH requirements USING INTEGER PRIMARY KEY (
     WHERE "course_id" = ( -- SEARCH satisfies USING INDEX search_by_course_id(requirement) (course_id=?)
         SELECT "id"
         FROM "courses"
-        WHERE "title" = 'Advanced Databases' -- SCAN courses
+        WHERE "title" = 'Advanced Databases' -- SEARCH courses USING COVERING INDEX search_by_semester
         AND "semester" = 'Fall 2023'
     )
 );
@@ -83,5 +83,5 @@ GROUP BY "requirements"."name"; -- SEARCH requirements USING INTEGER PRIMARY KEY
 explain query plan
 SELECT "department", "number", "title"
 FROM "courses" --
-WHERE "title" LIKE 'History%' -- SCAN courses
+WHERE "title" LIKE 'History%' -- -- SEARCH courses USING COVERING INDEX search_by_semester
 AND "semester" = 'Fall 2023';
